@@ -59,28 +59,18 @@ export function useCreateDonation() {
       donorEmail: string;
       campaignId?: string;
     }) => {
-      const insertData: {
-        user_id: string | undefined;
-        amount: number;
-        donor_name: string;
-        donor_email: string;
-        payment_status: string;
-        campaign_id?: string;
-      } = {
+      const insertData = {
         user_id: user?.id,
         amount,
         donor_name: donorName,
         donor_email: donorEmail,
         payment_status: "completed",
+        ...(campaignId && { campaign_id: campaignId }),
       };
-      
-      if (campaignId) {
-        insertData.campaign_id = campaignId;
-      }
 
       const { data, error } = await supabase
         .from("donations")
-        .insert([insertData])
+        .insert([insertData as any])
         .select()
         .single();
 
