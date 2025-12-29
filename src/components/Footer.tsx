@@ -71,15 +71,15 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-background/70">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                support@edudonor.com
+                support@edudonor.pk
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                +1 (555) 123-4567
+                +92 301 629 8744
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                123 Education Lane, CA
+                Gulberg, Lahore, Pakistan
               </li>
             </ul>
           </div>
