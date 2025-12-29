@@ -10,15 +10,6 @@ interface CampaignCardProps {
   campaign: Campaign;
 }
 
-const categoryLabels: Record<Campaign["category"], string> = {
-  education: "Education",
-  emergency: "Emergency",
-  scholarship: "Scholarship",
-  infrastructure: "Infrastructure",
-  supplies: "Supplies",
-  other: "Other",
-};
-
 const urgencyLabels: Record<Campaign["urgency"], string> = {
   low: "Low Urgency",
   medium: "Medium",
@@ -57,11 +48,6 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
       </div>
 
       <CardContent className="p-5 space-y-4">
-        {/* Category */}
-        <Badge variant="outline" className="text-xs">
-          {categoryLabels[campaign.category]}
-        </Badge>
-
         {/* Title & Description */}
         <div>
           <h3 className="font-serif text-lg font-semibold line-clamp-1 group-hover:text-primary transition-colors">
