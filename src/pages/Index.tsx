@@ -20,8 +20,8 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.2s" }}>
               <Button asChild size="xl" variant="gold">
-                <Link to="/campaigns">
-                  Start Donating <ArrowRight className="ml-2 h-5 w-5" />
+                <Link to="/donate">
+                  Donate Now <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button asChild size="xl" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
