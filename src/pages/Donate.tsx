@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { useCampaign } from "@/hooks/useCampaigns";
 import { useCreateDonation } from "@/hooks/useDonations";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Heart, CreditCard, Check, ArrowLeft, Smartphone } from "lucide-react";
+import { Loader2, Heart, CreditCard, Check, Smartphone, BookOpen } from "lucide-react";
 import { z } from "zod";
 
 type PaymentMethod = "card" | "jazzcash" | "easypaisa";
@@ -35,11 +32,9 @@ const mobileWalletSchema = z.object({
 const presetAmounts = [500, 1000, 2500, 5000, 10000, 25000];
 
 export default function Donate() {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { data: campaign, isLoading: campaignLoading } = useCampaign(id || "");
   const createDonation = useCreateDonation();
 
   const [step, setStep] = useState<"amount" | "payment" | "success">("amount");
@@ -55,31 +50,6 @@ export default function Donate() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [receiptNumber, setReceiptNumber] = useState("");
-
-  if (campaignLoading) {
-    return (
-      <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
-    );
-  }
-
-  if (!campaign) {
-    return (
-      <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Campaign not found</h2>
-            <Button onClick={() => navigate("/campaigns")}>Browse Campaigns</Button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  const progress = Math.min((campaign.raised_amount / campaign.target_amount) * 100, 100);
 
   const handleAmountSelect = (value: number) => {
     setAmount(value);
@@ -143,7 +113,6 @@ export default function Donate() {
 
     try {
       const result = await createDonation.mutateAsync({
-        campaignId: campaign.id,
         amount,
         donorName,
         donorEmail,
@@ -159,42 +128,39 @@ export default function Donate() {
   };
 
   const paymentMethods = [
-    { id: "jazzcash" as PaymentMethod, name: "JazzCash", color: "bg-red-500", icon: "📱" },
-    { id: "easypaisa" as PaymentMethod, name: "Easypaisa", color: "bg-green-500", icon: "📱" },
-    { id: "card" as PaymentMethod, name: "Card", color: "bg-blue-500", icon: "💳" },
+    { id: "jazzcash" as PaymentMethod, name: "JazzCash", icon: "📱" },
+    { id: "easypaisa" as PaymentMethod, name: "Easypaisa", icon: "📱" },
+    { id: "card" as PaymentMethod, name: "Card", icon: "💳" },
   ];
 
   return (
     <Layout>
       <div className="py-12">
         <div className="container mx-auto px-4 max-w-4xl">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/campaigns")}
-            className="mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Campaigns
-          </Button>
+          <div className="text-center mb-10">
+            <h1 className="font-serif text-4xl font-bold mb-4">Support Education</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Your donation helps provide quality education to underprivileged students across Pakistan.
+            </p>
+          </div>
 
           <div className="grid md:grid-cols-5 gap-8">
-            {/* Campaign Summary */}
+            {/* Education Info Card */}
             <div className="md:col-span-2">
               <Card>
                 <div className="h-40 bg-gradient-hero rounded-t-lg flex items-center justify-center">
-                  {campaign.image_url ? (
-                    <img src={campaign.image_url} alt={campaign.title} className="w-full h-full object-cover rounded-t-lg" />
-                  ) : (
-                    <Heart className="h-16 w-16 text-primary-foreground/50" />
-                  )}
+                  <BookOpen className="h-16 w-16 text-primary-foreground/80" />
                 </div>
                 <CardContent className="p-4 space-y-4">
-                  <Badge variant="outline" className="text-xs">Education</Badge>
-                  <h3 className="font-serif text-lg font-semibold">{campaign.title}</h3>
-                  <Progress value={progress} className="h-2" />
-                  <div className="flex justify-between text-sm">
-                    <span className="font-semibold text-primary">Rs. {campaign.raised_amount.toLocaleString()}</span>
-                    <span className="text-muted-foreground">of Rs. {campaign.target_amount.toLocaleString()}</span>
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-primary" />
+                    <h3 className="font-serif text-lg font-semibold">Education Donation</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Every contribution helps provide books, supplies, and educational resources to students in need.
+                  </p>
+                  <div className="pt-3 border-t">
+                    <p className="text-xs text-muted-foreground">100% of your donation goes directly to education programs.</p>
                   </div>
                 </CardContent>
               </Card>
@@ -387,7 +353,7 @@ export default function Donate() {
                     </div>
                     <div className="flex flex-col gap-3">
                       <Button onClick={() => navigate("/history")}>View My Donations</Button>
-                      <Button variant="outline" onClick={() => navigate("/campaigns")}>Browse More Campaigns</Button>
+                      <Button variant="outline" onClick={() => navigate("/")}>Back to Home</Button>
                     </div>
                   </CardContent>
                 </Card>

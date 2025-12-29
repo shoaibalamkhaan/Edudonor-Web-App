@@ -49,26 +49,38 @@ export function useCreateDonation() {
 
   return useMutation({
     mutationFn: async ({
-      campaignId,
       amount,
       donorName,
       donorEmail,
+      campaignId,
     }: {
-      campaignId: string;
       amount: number;
       donorName: string;
       donorEmail: string;
+      campaignId?: string;
     }) => {
+      const insertData: {
+        user_id: string | undefined;
+        amount: number;
+        donor_name: string;
+        donor_email: string;
+        payment_status: string;
+        campaign_id?: string;
+      } = {
+        user_id: user?.id,
+        amount,
+        donor_name: donorName,
+        donor_email: donorEmail,
+        payment_status: "completed",
+      };
+      
+      if (campaignId) {
+        insertData.campaign_id = campaignId;
+      }
+
       const { data, error } = await supabase
         .from("donations")
-        .insert([{
-          user_id: user?.id,
-          campaign_id: campaignId,
-          amount,
-          donor_name: donorName,
-          donor_email: donorEmail,
-          payment_status: "completed",
-        }])
+        .insert([insertData])
         .select()
         .single();
 

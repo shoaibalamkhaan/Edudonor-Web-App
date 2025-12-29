@@ -38,10 +38,10 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             <Link 
-              to="/campaigns" 
+              to="/donate" 
               className="text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              Campaigns
+              Donate
             </Link>
             {user && (
               <Link 
@@ -119,11 +119,11 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
               <Link 
-                to="/campaigns" 
+                to="/donate" 
                 className="text-foreground font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Campaigns
+                Donate
               </Link>
               {user && (
                 <>
