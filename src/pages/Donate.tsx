@@ -11,16 +11,25 @@ import { useCampaign } from "@/hooks/useCampaigns";
 import { useCreateDonation } from "@/hooks/useDonations";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Heart, CreditCard, Check, ArrowLeft } from "lucide-react";
+import { Loader2, Heart, CreditCard, Check, ArrowLeft, Smartphone } from "lucide-react";
 import { z } from "zod";
 
-const donationSchema = z.object({
-  amount: z.number().min(1, "Minimum donation is $1"),
+type PaymentMethod = "card" | "jazzcash" | "easypaisa";
+
+const cardSchema = z.object({
+  amount: z.number().min(1, "Minimum donation is Rs. 1"),
   donorName: z.string().min(2, "Name is required"),
   donorEmail: z.string().email("Valid email is required"),
   cardNumber: z.string().regex(/^\d{16}$/, "Enter a valid 16-digit card number"),
   expiry: z.string().regex(/^\d{2}\/\d{2}$/, "Enter expiry as MM/YY"),
   cvv: z.string().regex(/^\d{3,4}$/, "Enter a valid CVV"),
+});
+
+const mobileWalletSchema = z.object({
+  amount: z.number().min(1, "Minimum donation is Rs. 1"),
+  donorName: z.string().min(2, "Name is required"),
+  donorEmail: z.string().email("Valid email is required"),
+  mobileNumber: z.string().regex(/^03\d{9}$/, "Enter a valid Pakistani mobile number (03XXXXXXXXX)"),
 });
 
 const presetAmounts = [500, 1000, 2500, 5000, 10000, 25000];
@@ -34,13 +43,15 @@ export default function Donate() {
   const createDonation = useCreateDonation();
 
   const [step, setStep] = useState<"amount" | "payment" | "success">("amount");
-  const [amount, setAmount] = useState<number>(25);
+  const [amount, setAmount] = useState<number>(1000);
   const [customAmount, setCustomAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("jazzcash");
   const [donorName, setDonorName] = useState(user?.user_metadata?.full_name || "");
   const [donorEmail, setDonorEmail] = useState(user?.email || "");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [receiptNumber, setReceiptNumber] = useState("");
@@ -87,14 +98,23 @@ export default function Donate() {
     setErrors({});
     
     try {
-      donationSchema.parse({
-        amount,
-        donorName,
-        donorEmail,
-        cardNumber: cardNumber.replace(/\s/g, ""),
-        expiry,
-        cvv,
-      });
+      if (paymentMethod === "card") {
+        cardSchema.parse({
+          amount,
+          donorName,
+          donorEmail,
+          cardNumber: cardNumber.replace(/\s/g, ""),
+          expiry,
+          cvv,
+        });
+      } else {
+        mobileWalletSchema.parse({
+          amount,
+          donorName,
+          donorEmail,
+          mobileNumber,
+        });
+      }
     } catch (err) {
       if (err instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
@@ -138,6 +158,12 @@ export default function Donate() {
     }
   };
 
+  const paymentMethods = [
+    { id: "jazzcash" as PaymentMethod, name: "JazzCash", color: "bg-red-500", icon: "📱" },
+    { id: "easypaisa" as PaymentMethod, name: "Easypaisa", color: "bg-green-500", icon: "📱" },
+    { id: "card" as PaymentMethod, name: "Card", color: "bg-blue-500", icon: "💳" },
+  ];
+
   return (
     <Layout>
       <div className="py-12">
@@ -163,7 +189,7 @@ export default function Donate() {
                   )}
                 </div>
                 <CardContent className="p-4 space-y-4">
-                  <Badge variant="outline" className="text-xs">{campaign.category}</Badge>
+                  <Badge variant="outline" className="text-xs">Education</Badge>
                   <h3 className="font-serif text-lg font-semibold">{campaign.title}</h3>
                   <Progress value={progress} className="h-2" />
                   <div className="flex justify-between text-sm">
@@ -226,46 +252,103 @@ export default function Donate() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="font-serif">Payment Details</CardTitle>
-                    <CardDescription>Enter your payment information (Demo - No real charges)</CardDescription>
+                    <CardDescription>Select your payment method (Demo - No real charges)</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-6">
+                    {/* Payment Method Selector */}
+                    <div className="space-y-3">
+                      <Label>Payment Method</Label>
+                      <div className="grid grid-cols-3 gap-3">
+                        {paymentMethods.map((method) => (
+                          <button
+                            key={method.id}
+                            type="button"
+                            onClick={() => setPaymentMethod(method.id)}
+                            className={`relative p-4 rounded-lg border-2 transition-all ${
+                              paymentMethod === method.id
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <div className="text-center">
+                              <span className="text-2xl">{method.icon}</span>
+                              <p className="text-sm font-medium mt-1">{method.name}</p>
+                            </div>
+                            {paymentMethod === method.id && (
+                              <div className="absolute top-2 right-2 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-primary-foreground" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Donor Info */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Full Name</Label>
-                        <Input value={donorName} onChange={(e) => setDonorName(e.target.value)} placeholder="John Doe" />
+                        <Input value={donorName} onChange={(e) => setDonorName(e.target.value)} placeholder="Muhammad Ali" />
                         {errors.donorName && <p className="text-sm text-destructive">{errors.donorName}</p>}
                       </div>
                       <div className="space-y-2">
                         <Label>Email</Label>
-                        <Input type="email" value={donorEmail} onChange={(e) => setDonorEmail(e.target.value)} placeholder="john@example.com" />
+                        <Input type="email" value={donorEmail} onChange={(e) => setDonorEmail(e.target.value)} placeholder="ali@example.com" />
                         {errors.donorEmail && <p className="text-sm text-destructive">{errors.donorEmail}</p>}
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Card Number</Label>
-                      <div className="relative">
-                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 16))}
-                          placeholder="4242 4242 4242 4242"
-                          className="pl-10"
-                        />
-                      </div>
-                      {errors.cardNumber && <p className="text-sm text-destructive">{errors.cardNumber}</p>}
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+
+                    {/* Mobile Wallet Fields */}
+                    {(paymentMethod === "jazzcash" || paymentMethod === "easypaisa") && (
                       <div className="space-y-2">
-                        <Label>Expiry</Label>
-                        <Input value={expiry} onChange={(e) => setExpiry(e.target.value)} placeholder="MM/YY" maxLength={5} />
-                        {errors.expiry && <p className="text-sm text-destructive">{errors.expiry}</p>}
+                        <Label>{paymentMethod === "jazzcash" ? "JazzCash" : "Easypaisa"} Mobile Number</Label>
+                        <div className="relative">
+                          <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            value={mobileNumber}
+                            onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                            placeholder="03001234567"
+                            className="pl-10"
+                          />
+                        </div>
+                        {errors.mobileNumber && <p className="text-sm text-destructive">{errors.mobileNumber}</p>}
+                        <p className="text-xs text-muted-foreground">
+                          Enter your {paymentMethod === "jazzcash" ? "JazzCash" : "Easypaisa"} registered mobile number
+                        </p>
                       </div>
-                      <div className="space-y-2">
-                        <Label>CVV</Label>
-                        <Input type="password" value={cvv} onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="•••" maxLength={4} />
-                        {errors.cvv && <p className="text-sm text-destructive">{errors.cvv}</p>}
-                      </div>
-                    </div>
+                    )}
+
+                    {/* Card Fields */}
+                    {paymentMethod === "card" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>Card Number</Label>
+                          <div className="relative">
+                            <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              value={cardNumber}
+                              onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 16))}
+                              placeholder="4242 4242 4242 4242"
+                              className="pl-10"
+                            />
+                          </div>
+                          {errors.cardNumber && <p className="text-sm text-destructive">{errors.cardNumber}</p>}
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Expiry</Label>
+                            <Input value={expiry} onChange={(e) => setExpiry(e.target.value)} placeholder="MM/YY" maxLength={5} />
+                            {errors.expiry && <p className="text-sm text-destructive">{errors.expiry}</p>}
+                          </div>
+                          <div className="space-y-2">
+                            <Label>CVV</Label>
+                            <Input type="password" value={cvv} onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))} placeholder="•••" maxLength={4} />
+                            {errors.cvv && <p className="text-sm text-destructive">{errors.cvv}</p>}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
                     <div className="pt-4 border-t flex gap-3">
                       <Button variant="outline" onClick={() => setStep("amount")} disabled={isProcessing}>
                         Back
