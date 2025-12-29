@@ -24,7 +24,7 @@ export default function History() {
 ║                                             ║
 ║  Campaign: ${(donation.campaign?.title || "N/A").slice(0, 31).padEnd(31)}║
 ║                                             ║
-║  Amount Donated: $${donation.amount.toLocaleString().padEnd(24)}║
+║  Amount Donated: Rs. ${donation.amount.toLocaleString().padEnd(21)}║
 ║  Payment Status: ${donation.payment_status.padEnd(25)}║
 ║                                             ║
 ╠════════════════════════════════════════════╣
@@ -71,7 +71,7 @@ export default function History() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-primary-foreground/80 text-sm mb-1">Total Donated</p>
-                  <p className="text-3xl font-bold">${totalDonated.toLocaleString()}</p>
+                  <p className="text-3xl font-bold">Rs. {totalDonated.toLocaleString()}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-primary-foreground/80 text-sm mb-1">Donations Made</p>
@@ -108,7 +108,7 @@ export default function History() {
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="font-bold text-lg text-primary">${Number(donation.amount).toLocaleString()}</p>
+                          <p className="font-bold text-lg text-primary">Rs. {Number(donation.amount).toLocaleString()}</p>
                           <Badge variant="success" className="text-xs">
                             {donation.payment_status}
                           </Badge>
