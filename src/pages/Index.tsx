@@ -1,14 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
-import { CampaignCard } from "@/components/CampaignCard";
-import { useCampaigns } from "@/hooks/useCampaigns";
-import { Heart, Users, BookOpen, Award, ArrowRight, Loader2 } from "lucide-react";
+import { Heart, Users, BookOpen, Award, ArrowRight } from "lucide-react";
 
 const Index = () => {
-  const { data: campaigns, isLoading } = useCampaigns();
-  const featuredCampaigns = campaigns?.slice(0, 3) || [];
-
   return (
     <Layout>
       {/* Hero Section */}
@@ -57,42 +52,6 @@ const Index = () => {
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Campaigns */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">Featured Campaigns</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              These campaigns need your support the most. Every contribution brings us closer to our goals.
-            </p>
-          </div>
-
-          {isLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : featuredCampaigns.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredCampaigns.map((campaign) => (
-                <CampaignCard key={campaign.id} campaign={campaign} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>No campaigns available yet. Check back soon!</p>
-            </div>
-          )}
-
-          <div className="text-center mt-10">
-            <Button asChild variant="outline" size="lg">
-              <Link to="/campaigns">
-                View All Campaigns <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
           </div>
         </div>
       </section>
