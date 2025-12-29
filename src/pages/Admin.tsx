@@ -12,15 +12,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useAllCampaigns, useCreateCampaign, useUpdateCampaign, useDeleteCampaign, Campaign } from "@/hooks/useCampaigns";
 import { Loader2, Plus, Pencil, Trash2, DollarSign, Target, Users } from "lucide-react";
 
-const categoryOptions = [
-  { value: "education", label: "Education" },
-  { value: "emergency", label: "Emergency" },
-  { value: "scholarship", label: "Scholarship" },
-  { value: "infrastructure", label: "Infrastructure" },
-  { value: "supplies", label: "Supplies" },
-  { value: "other", label: "Other" },
-];
-
 const urgencyOptions = [
   { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },
@@ -181,7 +172,6 @@ export default function Admin() {
                           <Badge variant={campaign.urgency as any}>{campaign.urgency}</Badge>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>{categoryOptions.find(c => c.value === campaign.category)?.label}</span>
                           <span>Rs. {campaign.raised_amount.toLocaleString()} / Rs. {campaign.target_amount.toLocaleString()}</span>
                         </div>
                       </div>
@@ -224,29 +214,16 @@ export default function Admin() {
               <Label>Description</Label>
               <Textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={3} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v as Campaign["category"] })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {categoryOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Urgency</Label>
-                <Select value={formData.urgency} onValueChange={(v) => setFormData({ ...formData, urgency: v as Campaign["urgency"] })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {urgencyOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label>Urgency</Label>
+              <Select value={formData.urgency} onValueChange={(v) => setFormData({ ...formData, urgency: v as Campaign["urgency"] })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {urgencyOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>Target Amount (Rs.)</Label>

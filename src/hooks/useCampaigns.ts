@@ -16,9 +16,9 @@ export type Campaign = {
   updated_at: string;
 };
 
-export function useCampaigns(searchQuery?: string, urgencyFilter?: string, categoryFilter?: string) {
+export function useCampaigns(searchQuery?: string, urgencyFilter?: string) {
   return useQuery({
-    queryKey: ["campaigns", searchQuery, urgencyFilter, categoryFilter],
+    queryKey: ["campaigns", searchQuery, urgencyFilter],
     queryFn: async () => {
       let query = supabase
         .from("campaigns")
@@ -32,10 +32,6 @@ export function useCampaigns(searchQuery?: string, urgencyFilter?: string, categ
 
       if (urgencyFilter && urgencyFilter !== "all") {
         query = query.eq("urgency", urgencyFilter as Campaign["urgency"]);
-      }
-
-      if (categoryFilter && categoryFilter !== "all") {
-        query = query.eq("category", categoryFilter as Campaign["category"]);
       }
 
       const { data, error } = await query;

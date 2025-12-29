@@ -4,14 +4,13 @@ import { CampaignCard } from "@/components/CampaignCard";
 import { useCampaigns } from "@/hooks/useCampaigns";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Loader2 } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 
 export default function Campaigns() {
   const [search, setSearch] = useState("");
   const [urgency, setUrgency] = useState("all");
-  const [category, setCategory] = useState("all");
   
-  const { data: campaigns, isLoading } = useCampaigns(search, urgency, category);
+  const { data: campaigns, isLoading } = useCampaigns(search, urgency);
 
   return (
     <Layout>
@@ -35,34 +34,18 @@ export default function Campaigns() {
                 className="pl-10"
               />
             </div>
-            <div className="flex gap-4">
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[180px]">
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
-                  <SelectItem value="emergency">Emergency</SelectItem>
-                  <SelectItem value="scholarship">Scholarship</SelectItem>
-                  <SelectItem value="infrastructure">Infrastructure</SelectItem>
-                  <SelectItem value="supplies">Supplies</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={urgency} onValueChange={setUrgency}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Urgency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Urgency</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={urgency} onValueChange={setUrgency}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Urgency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Urgency</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="critical">Critical</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Campaigns Grid */}
