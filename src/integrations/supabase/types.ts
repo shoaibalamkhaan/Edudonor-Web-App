@@ -59,7 +59,7 @@ export type Database = {
       donations: {
         Row: {
           amount: number
-          campaign_id: string
+          campaign_id: string | null
           created_at: string | null
           donor_email: string | null
           donor_name: string | null
@@ -70,7 +70,7 @@ export type Database = {
         }
         Insert: {
           amount: number
-          campaign_id: string
+          campaign_id?: string | null
           created_at?: string | null
           donor_email?: string | null
           donor_name?: string | null
@@ -81,7 +81,7 @@ export type Database = {
         }
         Update: {
           amount?: number
-          campaign_id?: string
+          campaign_id?: string | null
           created_at?: string | null
           donor_email?: string | null
           donor_name?: string | null
