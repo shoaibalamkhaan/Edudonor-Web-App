@@ -23,7 +23,7 @@ const donationSchema = z.object({
   cvv: z.string().regex(/^\d{3,4}$/, "Enter a valid CVV"),
 });
 
-const presetAmounts = [10, 25, 50, 100, 250, 500];
+const presetAmounts = [500, 1000, 2500, 5000, 10000, 25000];
 
 export default function Donate() {
   const { id } = useParams<{ id: string }>();
@@ -167,8 +167,8 @@ export default function Donate() {
                   <h3 className="font-serif text-lg font-semibold">{campaign.title}</h3>
                   <Progress value={progress} className="h-2" />
                   <div className="flex justify-between text-sm">
-                    <span className="font-semibold text-primary">${campaign.raised_amount.toLocaleString()}</span>
-                    <span className="text-muted-foreground">of ${campaign.target_amount.toLocaleString()}</span>
+                    <span className="font-semibold text-primary">Rs. {campaign.raised_amount.toLocaleString()}</span>
+                    <span className="text-muted-foreground">of Rs. {campaign.target_amount.toLocaleString()}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -191,28 +191,28 @@ export default function Donate() {
                           onClick={() => handleAmountSelect(preset)}
                           className="h-12"
                         >
-                          ${preset}
+                          Rs. {preset.toLocaleString()}
                         </Button>
                       ))}
                     </div>
                     <div className="space-y-2">
-                      <Label>Custom Amount</Label>
+                      <Label>Custom Amount (Rs.)</Label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">Rs.</span>
                         <Input
                           type="number"
                           min="1"
                           placeholder="Enter amount"
                           value={customAmount}
                           onChange={(e) => handleCustomAmount(e.target.value)}
-                          className="pl-7"
+                          className="pl-10"
                         />
                       </div>
                     </div>
                     <div className="pt-4 border-t">
                       <div className="flex justify-between items-center mb-4">
                         <span className="text-muted-foreground">Donation Amount</span>
-                        <span className="text-2xl font-bold text-primary">${amount.toLocaleString()}</span>
+                        <span className="text-2xl font-bold text-primary">Rs. {amount.toLocaleString()}</span>
                       </div>
                       <Button className="w-full" size="lg" variant="hero" onClick={() => setStep("payment")}>
                         Continue to Payment
@@ -277,7 +277,7 @@ export default function Donate() {
                             Processing...
                           </>
                         ) : (
-                          <>Donate ${amount.toLocaleString()}</>
+                          <>Donate Rs. {amount.toLocaleString()}</>
                         )}
                       </Button>
                     </div>
@@ -296,7 +296,7 @@ export default function Donate() {
                     </div>
                     <div>
                       <h2 className="font-serif text-2xl font-bold mb-2">Thank You!</h2>
-                      <p className="text-muted-foreground">Your donation of <strong>${amount.toLocaleString()}</strong> has been processed successfully.</p>
+                      <p className="text-muted-foreground">Your donation of <strong>Rs. {amount.toLocaleString()}</strong> has been processed successfully.</p>
                     </div>
                     <div className="bg-muted rounded-lg p-4">
                       <p className="text-sm text-muted-foreground mb-1">Receipt Number</p>

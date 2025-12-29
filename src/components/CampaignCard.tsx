@@ -81,10 +81,10 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
           />
           <div className="flex justify-between text-sm">
             <span className="font-semibold text-primary">
-              ${campaign.raised_amount.toLocaleString()}
+              Rs. {campaign.raised_amount.toLocaleString()}
             </span>
             <span className="text-muted-foreground">
-              of ${campaign.target_amount.toLocaleString()}
+              of Rs. {campaign.target_amount.toLocaleString()}
             </span>
           </div>
         </div>
@@ -93,7 +93,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <Target className="h-3 w-3" />
-            {progress >= 100 ? "Goal Reached!" : `$${remaining.toLocaleString()} to go`}
+            {progress >= 100 ? "Goal Reached!" : `Rs. ${remaining.toLocaleString()} to go`}
           </div>
         </div>
       </CardContent>

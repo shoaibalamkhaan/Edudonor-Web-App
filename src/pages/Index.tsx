@@ -44,7 +44,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { icon: Heart, label: "Total Raised", value: "$2.4M+" },
+              { icon: Heart, label: "Total Raised", value: "Rs. 500M+" },
               { icon: Users, label: "Active Donors", value: "15,000+" },
               { icon: BookOpen, label: "Students Helped", value: "8,500+" },
               { icon: Award, label: "Campaigns Funded", value: "340+" },

@@ -157,7 +157,7 @@ export default function Admin() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Raised</p>
-                  <p className="text-2xl font-bold">${totalRaised.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">Rs. {totalRaised.toLocaleString()}</p>
                 </div>
               </CardContent>
             </Card>
@@ -182,7 +182,7 @@ export default function Admin() {
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>{categoryOptions.find(c => c.value === campaign.category)?.label}</span>
-                          <span>${campaign.raised_amount.toLocaleString()} / ${campaign.target_amount.toLocaleString()}</span>
+                          <span>Rs. {campaign.raised_amount.toLocaleString()} / Rs. {campaign.target_amount.toLocaleString()}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export default function Admin() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Target Amount ($)</Label>
+              <Label>Target Amount (Rs.)</Label>
               <Input type="number" min="100" value={formData.target_amount} onChange={(e) => setFormData({ ...formData, target_amount: parseFloat(e.target.value) })} required />
             </div>
             <div className="space-y-2">
